@@ -3,14 +3,17 @@ package com.example.roomdatabase.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import com.example.roomdatabase.repository.RepositoryMhs
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.internal.NopCollector.emit
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 
 class HomeMhsViewModel(
     private val repositoryMhs: RepositoryMhs
 ) : ViewModel() {
 
-    val homeUiState: StateFlow<HomeUiState> = repositoryMhs.getAllMhs()
+    val homeUiState: Flow<Unit> = repositoryMhs.getAllMhs()
         .filterNotNull()
         .map {
             HomeUiState(
