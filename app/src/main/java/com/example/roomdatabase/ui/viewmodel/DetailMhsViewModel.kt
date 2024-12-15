@@ -16,13 +16,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 
-class DetailMhsViewModel(
+class DetailMhsViewModel (
     savedStateHandle: SavedStateHandle,
     private val repositoryMhs: RepositoryMhs,
-) : ViewModel() {
-    private val _nim: String = checkNotNull(savedStateHandle[DestinasiDetail.NIM])
 
-    val detailUiState: StateFlow<DetailUiState> = repositoryMhs.getMhs(_nim)
+    ) : ViewModel() {
+    private val nim: String = checkNotNull(savedStateHandle[DestinasiDetail.NIM])
+
+    val detailUiState: StateFlow<DetailUiState> = repositoryMhs.getMhs(nim)
         .filterNotNull()
         .map {
             DetailUiState(
@@ -32,7 +33,7 @@ class DetailMhsViewModel(
         }
         .onStart {
             emit(DetailUiState(isLoading = true))
-            delay(600)
+            kotlinx.coroutines.delay(600)
         }
         .catch {
             emit(
@@ -58,32 +59,33 @@ class DetailMhsViewModel(
             }
         }
     }
+}
 
-    data class DetailUiState(
-        val detailUiEvent: MahasiswaEvent = MahasiswaEvent(),
-        val isLoading: Boolean = false,
-        val isError: Boolean = false,
-        val errorMessage: String = ""
-    ) {
-        val isUiEventEmpty: Boolean
-            get() = detailUiEvent == MahasiswaEvent()
+data class DetailUiState(
+    val detailUiEvent: MahasiswaEvent = MahasiswaEvent (),
+    val isLoading: Boolean = false,
+    val isError: Boolean = false,
+    val errorMessage: String = ""
+) {
+    val isUiEventEmpty: Boolean
+        get() = detailUiEvent == MahasiswaEvent()
 
-        val isUiEventNotEmpty: Boolean
-            get() = detailUiEvent != MahasiswaEvent()
-    }
+    val isUiEventNotEmpty: Boolean
+        get() = detailUiEvent != MahasiswaEvent ()
+}
 
-    /*
-* Data class untuk menampung data yang akan ditampilkan di UI
+/*
+Data class untuk menampung data yang akan ditampilkan di UI
 */
 
-    //memindahkan data dari entity ke ui
-    fun Mahasiswa.toDetailUiEvent(): MahasiswaEvent {
-        return MahasiswaEvent(
-            nim = nim,
-            nama = nama,
-            jenisKelamin = jenisKelamin,
-            alamat = alamat,
-            kelas = kelas,
-            angkatan = angkatan
-        )
-    }
+//memindahkan data dari entity ke ui
+fun Mahasiswa.toDetailUiEvent () : MahasiswaEvent {
+    return MahasiswaEvent(
+        nim = nim,
+        nama = nama,
+        jenisKelamin = jenisKelamin,
+        alamat = alamat,
+        kelas = kelas,
+        angkatan = angkatan
+    )
+}
